@@ -4,7 +4,31 @@ import sys
 import random
 import string
 
-def make_chains(corpus):
+def twitterize(text):
+    """Takes randomly generated text and compresses it into a 
+    140 characters (or less)"""
+
+    tweet_list = []
+    count = 0
+
+    for word in text:
+        if count > 139:
+            break
+        else:
+            count += len(word) + 1
+            tweet_list.append(word)
+
+    tweet_list[0] = string.capitalize(tweet_list[0])
+
+    if tweet_list[-1][-1] != '.':
+        tweet_list[-1] = tweet_list[-1] + '.'
+
+
+    tweet_text = " ".join(tweet_list)
+
+    return tweet_text
+
+def make_chains(corpus, n):
     """Takes an input text as a string and returns a dictionary of
     markov chains."""
 
@@ -12,8 +36,7 @@ def make_chains(corpus):
 
     text = corpus.read()
     text = text.rstrip()
-    text = string.replace(text, "\n", " ")
-    words = text.split(" ")
+    words = text.split()
 
     index = 0
     while index < ( len(words) - 2 ):
@@ -59,11 +82,11 @@ def make_text(chains):
             word3 = random.choice(chains[key])
             text_list.append(word3)
             index += 1
-            #print text_list
         else:
             break
 
-    return " ".join(text_list)
+    #return " ".join(text_list)
+    return text_list
 
 
 def main():
@@ -73,11 +96,15 @@ def main():
     
     input_text = open(filename)
 
-    chain_dict = make_chains(input_text)
-    print chain_dict
+    #TODO: make chain_dict create n-grams.
+    chain_dict = make_chains(input_text, n)
     
+    #changing random_text to be a list.
     random_text = make_text(chain_dict)
-    print random_text
+    # print random_text
+
+    tweet = twitterize(random_text)
+    print tweet
 
     input_text.close()
 
